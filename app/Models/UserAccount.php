@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class UserAccount extends Model
 {
     use HasFactory;
+    protected $fillable=[
+        'name',
+        'surname',
+        'email',
+        'password',
+        'account',
+        'PIN'
+    ];
 }
-$table->string('name');
-$table->string('surname');
-$table->string('email')->unique();
-$table->string('password');
-$table->string('PIN');
+
