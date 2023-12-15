@@ -19,7 +19,8 @@ class CreateUserAccountsTable extends Migration
             $table->string('surname');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('PIN');
+            $table->string('account',10)->unique();
+            $table->integer('PIN');
             $table->timestamps();
         });
     }

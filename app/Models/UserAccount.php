@@ -9,3 +9,8 @@ class UserAccount extends Model
 {
     use HasFactory;
 }
+$table->string('name');
+$table->string('surname');
+$table->string('email')->unique();
+$table->string('password');
+$table->string('PIN');
