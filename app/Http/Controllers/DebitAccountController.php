@@ -24,6 +24,7 @@ class DebitAccountController extends Controller
      */
     public function create():View
     {
+        dd("Te ir");
         return view('accounts.debitcreate');
     }
 
