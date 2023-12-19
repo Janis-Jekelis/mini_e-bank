@@ -8,14 +8,15 @@
     <title>Document</title>
 </head>
 <body>
-<header>
-    <a href={{route('home.create')}}>
-        Create account
-    </a>
-    @foreach($users as $user)
-        <span>{{$user->name}}</span>
-        <a href="{{ route('home.show',[$user->id]) }}">{{$user->name}}</a>
-    @endforeach
-</header>
+<form>
+    <h2>Enter your password to create debit account </h2>
+    <form>
+        <label for="password"></label>
+        <input type="password" name="password" id="password">
+        <label for="confirm-password"></label>
+        <input type="password" name="confirmPassword" id="confirm-password">
+
+    </form>
+</form>
 </body>
 </html>

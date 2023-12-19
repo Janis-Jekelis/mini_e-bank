@@ -35,8 +35,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function debitAccounts():HasMany
+    public function debitAccount()
     {
-        return $this->hasMany(DebitAccount::class);
+        return $this->hasOne(DebitAccount::class);
     }
 }

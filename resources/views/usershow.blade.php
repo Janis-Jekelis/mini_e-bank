@@ -9,8 +9,10 @@
 </head>
 <body>
 <header>
-
-   <h1>{{$user->name}}</h1>
+    <h1>{{$user->name}}</h1>
+    @if($debitAccount)
+        <a href="/ccccaaaa">Create debit account</a>
+    @endif
 </header>
 </body>
 </html>

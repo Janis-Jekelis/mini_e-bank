@@ -32,14 +32,23 @@ class UserController extends Controller
             'currency' => $request->input('currency')
         ]);
         $user->save();
-        /// return redirect('usershow');
+        return redirect()->route('home.store');
     }
 
     public function show($id): View
     {
-        $user = User::findOrFail($id);
-        dd($user->debitAccounts());
-        return view('usershow', ['user' => $user]);
+        $user = (User::findOrFail($id));
+        $debitAccount = false;
+        ////  var_dump($user->DebitAccount);
+        ///echo "<pre>";
+        ///echo($user->DebitAccount->amount);
+        if (!isset($user->DebitAccount)) $debitAccount = true;
+        return view(
+            'usershow',
+            [
+                'user' => $user,
+                'debitAccount'=>$debitAccount
+            ]);
     }
 
     /**
