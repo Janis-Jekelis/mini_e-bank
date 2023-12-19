@@ -11,7 +11,7 @@
 <header>
     <h1>{{$user->name}}</h1>
     @if($debitAccount)
-        <a href="{{ route('create', $user->id) }}">Create debit account</a>
+        <a href="{{ route('debit.create', $user->id) }}">Create debit account</a>
     @endif
 </header>
 </body>

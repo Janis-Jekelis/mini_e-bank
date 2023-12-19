@@ -6,4 +6,4 @@ use Illuminate\Support\Facades\Route;
 
 //Route::get('/',[UserAccountController::class,'index']);
 Route::resource('/home',UserController::class);
-Route::resource('/home/{id}/',DebitAccountController::class);
+Route::resource('/home/{id}/debit',DebitAccountController::class);
