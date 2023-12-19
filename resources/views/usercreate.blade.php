@@ -8,9 +8,8 @@
     <title>Document</title>
 </head>
 <body>
-<form method="post" action={{route('store')}}>
+<form method="post" action={{route('home.store')}}>
     @csrf
-    @method('PUT')
     <label for="name">Name:</label>
     <input type="text" name="name" id="name">
     <label for="surname">Surname:</label>
@@ -22,7 +21,7 @@
     <label for="password-confirm">Confirm password:</label>
     <input type="password" name="passwordConfirm" id="password-confirm">
     <label for="currency"></label>
-    <select id="currency">
+    <select id="currency" name="currency">
         @foreach($currencies as $currency)
             <option value={{$currency}}>{{$currency}}</option>
         @endforeach

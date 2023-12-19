@@ -9,12 +9,8 @@
 </head>
 <body>
 <header>
-    <a href="/create">
-        Create account
-    </a>
-    @foreach($users as $user)
-        <span>{{$user->name}}</span>
-    @endforeach
+
+   <h1>{{$user->name}}</h1>
 </header>
 </body>
 </html>

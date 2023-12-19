@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -11,36 +13,33 @@ class UserController extends Controller
 
     public function index(): View
     {
-
-        return view('index');
+        return view('index', ['users' => User::all()]);
     }
 
     public function create(): View
     {
 
-        return view('create',['currencies'=>['EUR', 'GBP', 'USD']]);
+        return view('usercreate', ['currencies' => ['EUR', 'GBP', 'USD']]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, User $user)
+    public function store(Request $request)
     {
-
+        $user = User::create([
+            'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
+            'email' => $request->input('email'),
+            'password' => $request->input('password'),
+            'currency' => $request->input('currency')
+        ]);
+        $user->save();
+        /// return redirect('usershow');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show($id): View
     {
-        //
+        $user = User::findOrFail($id);
+        dd($user->debitAccounts());
+        return view('usershow', ['user' => $user]);
     }
 
     /**
