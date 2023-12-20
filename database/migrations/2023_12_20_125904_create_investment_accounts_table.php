@@ -19,9 +19,9 @@ class CreateInvestmentAccountsTable extends Migration
             $table->string('account_number',15);
             $table->string('currency',3);
             $table->float('currency_amount')->default(0);
-            $table->string('asset');
-            $table->float('asset_amount');
-            $table->float('asset_start_value');
+            $table->string('asset')->nullable();
+            $table->float('asset_amount')->nullable();
+            $table->float('asset_start_value')->nullable();
             $table->timestamps();
             $table->foreign('user_id')
                 ->references('id')

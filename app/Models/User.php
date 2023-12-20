@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\accounts\DebitAccount;
+use App\Models\accounts\InvestmentAccount;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,5 +39,9 @@ class User extends Authenticatable
     public function debitAccount()
     {
         return $this->hasOne(DebitAccount::class);
+    }
+    public function investmentAccount()
+    {
+        return $this->hasMany(InvestmentAccount::class);
     }
 }

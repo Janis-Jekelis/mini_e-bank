@@ -12,7 +12,17 @@
     <h1>{{$user->name}}</h1>
     @if($debitAccount)
         <a href="{{ route('debit.create', $user->id) }}">Create debit account</a>
+    @else
+        <a href="{{ route('debit.index',['user'=>$user->id ] )}}">Debit account</a>
     @endif
+    @if($investAccount)
+        <a href="{{ route('invest.create', $user->id) }}">Create investment account</a>
+    @else
+        <a href="{{ route('invest.index',['user'=>$user->id ] )}}">Investment account</a>
+    @endif
+
 </header>
 </body>
 </html>
+
+

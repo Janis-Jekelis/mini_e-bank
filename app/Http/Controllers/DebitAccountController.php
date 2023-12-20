@@ -24,14 +24,10 @@ class DebitAccountController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create(User $user): View
     {
-        return view('accounts.debitcreate',['user'=>$user]);
+        return view('accounts.create',['user'=>$user]);
     }
 
     /**
@@ -47,10 +43,9 @@ class DebitAccountController extends Controller
             'currency' => $user->currency,
             'amount' => 0
         ]);
-        echo "lllasdasdasd";
         $debitAccount->user()->associate($user);
         $debitAccount->save();
-        return redirect()->route('home.index');
+        return redirect()->route('home.show',['home'=>$user->id]);
     }
 
     /**

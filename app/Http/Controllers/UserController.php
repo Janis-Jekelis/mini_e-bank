@@ -39,13 +39,17 @@ class UserController extends Controller
     {
         $user = (User::findOrFail($id));
         $debitAccount = false;
+        $investAccount = false;
         if (!isset($user->DebitAccount)) $debitAccount = true;
+        if (!isset($user->InvestmentAccount)) $investAccount = true;
         return view(
             'usershow',
             [
                 'user' => $user,
-                'debitAccount'=>$debitAccount
+                'debitAccount'=>$debitAccount,
+                'investAccount'=>$investAccount
             ]);
+
     }
 
     /**
