@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\accounts\DebitAccount;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,13 +19,12 @@ class UserController extends Controller
 
     public function create(): View
     {
-
         return view('usercreate', ['currencies' => ['EUR', 'GBP', 'USD']]);
     }
 
     public function store(Request $request)
     {
-        $user = User::create([
+        $user = (new User)->fill([
             'name' => $request->input('name'),
             'surname' => $request->input('surname'),
             'email' => $request->input('email'),
@@ -39,9 +39,6 @@ class UserController extends Controller
     {
         $user = (User::findOrFail($id));
         $debitAccount = false;
-        ////  var_dump($user->DebitAccount);
-        ///echo "<pre>";
-        ///echo($user->DebitAccount->amount);
         if (!isset($user->DebitAccount)) $debitAccount = true;
         return view(
             'usershow',

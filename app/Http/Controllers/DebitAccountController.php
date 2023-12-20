@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\accounts\DebitAccount;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DebitAccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    private function createDebitAccountNr(): string
+    {
+        $num = "DCODE";
+        for ($i = 0; $i < 10; $i++) {
+            $num .= rand(0, 9);
+        }
+        return $num;
+    }
+
     public function index()
     {
         //
@@ -22,27 +29,34 @@ class DebitAccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create():View
+    public function create(User $user): View
     {
-        dd("Te ir");
-        return view('accounts.debitcreate');
+        return view('accounts.debitcreate',['user'=>$user]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user): RedirectResponse
     {
-        //
+        $debitAccount = (new DebitAccount())->fill([
+            'account_number' => $this->createDebitAccountNr(),
+            'currency' => $user->currency,
+            'amount' => 0
+        ]);
+        echo "lllasdasdasd";
+        $debitAccount->user()->associate($user);
+        $debitAccount->save();
+        return redirect()->route('home.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -53,7 +67,7 @@ class DebitAccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -64,8 +78,8 @@ class DebitAccountController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -76,7 +90,7 @@ class DebitAccountController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

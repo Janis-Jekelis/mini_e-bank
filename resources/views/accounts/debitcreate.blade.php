@@ -8,15 +8,14 @@
     <title>Document</title>
 </head>
 <body>
-<form>
     <h2>Enter your password to create debit account </h2>
-    <form>
+    <form method="post" action={{ route('debit.store', $user->id) }}>
+        @csrf
         <label for="password"></label>
         <input type="password" name="password" id="password">
         <label for="confirm-password"></label>
         <input type="password" name="confirmPassword" id="confirm-password">
-
+        <button type="submit">Create</button>
     </form>
-</form>
 </body>
 </html>

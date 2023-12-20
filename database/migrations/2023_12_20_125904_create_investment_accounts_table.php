@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDebitAccountsTable extends Migration
+class CreateInvestmentAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,15 @@ class CreateDebitAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('debit_accounts', function (Blueprint $table) {
+        Schema::create('investment_accounts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('account_number',15);
             $table->string('currency',3);
-            $table->float('amount')->default(0);
+            $table->float('currency_amount')->default(0);
+            $table->string('asset');
+            $table->float('asset_amount');
+            $table->float('asset_start_value');
             $table->timestamps();
             $table->foreign('user_id')
                 ->references('id')
@@ -34,6 +37,6 @@ class CreateDebitAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('debit_accounts');
+        Schema::dropIfExists('investment_accounts');
     }
 }

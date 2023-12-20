@@ -23,4 +23,12 @@ class DebitAccount extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function deposit(float $amount):void
+    {
+        $this->amount+=($amount*100);
+    }
+    public function withdraw(float $amount):void
+    {
+        $this->amount-=($amount*100);
+    }
 }
