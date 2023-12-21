@@ -42,6 +42,6 @@ class User extends Authenticatable
     }
     public function investmentAccount()
     {
-        return $this->hasMany(InvestmentAccount::class);
+        return $this->hasOne(InvestmentAccount::class);
     }
 }

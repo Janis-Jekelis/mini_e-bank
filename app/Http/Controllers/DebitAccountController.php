@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\accounts\DebitAccount;
 use App\Models\User;
+use App\Rules\Amount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class DebitAccountController extends Controller
@@ -19,15 +22,15 @@ class DebitAccountController extends Controller
         return $num;
     }
 
-    public function index()
+    public function index(): View
     {
-        //
+        return view('accounts.debit', ['user' => Auth::user()]);
     }
 
 
     public function create(User $user): View
     {
-        return view('accounts.create',['user'=>$user]);
+        return view('accounts.create', ['user' => $user]);
     }
 
     /**
@@ -45,7 +48,7 @@ class DebitAccountController extends Controller
         ]);
         $debitAccount->user()->associate($user);
         $debitAccount->save();
-        return redirect()->route('home.show',['home'=>$user->id]);
+        return redirect()->route('home.show', ['home' => $user->id]);
     }
 
     /**
@@ -70,24 +73,25 @@ class DebitAccountController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request): RedirectResponse
     {
-        //
+        $user=Auth::user();
+        $deposit = $request->get('debitAccountDeposit');
+        $transferToAccount=$request->get('transferToAccount');
+        $transferSum=$request->get('transfer');
+        if ($deposit !== null) {
+            $debitAcc = $user->debitAccount()->get()->first();
+
+            $debitAcc->deposit($deposit);
+            $debitAcc->update();
+        }
+
+        if ($transferToAccount!== null && ($transferSum!==null)){
+            $request->validate(['transfer'=>new Amount()]);
+        }
+        return redirect(route('home.show',['home'=>$user]));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
