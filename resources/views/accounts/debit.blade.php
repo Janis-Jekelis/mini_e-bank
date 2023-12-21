@@ -35,7 +35,7 @@
         <div class="row justify-content-start align-items-center">
             <label class="col-1" for="transferToAccount">Receiver Account number</label>
             <input class="border-black col-2 me-3" type="text"  id="transferToAccount" name="transferToAccount">
-            <label class="col-1" for="deposit">Transfer ({{$user->currency}}):</label>
+            <label class="col-1" for="deposit">Transfer sum ({{$user->currency}}):</label>
             <input class="border-black col-2 me-3" type="number" step="0.01" min="0" id="deposit"
                    name="transfer">
             <button class="btn btn-primary col-1" type="submit">Transfer</button>

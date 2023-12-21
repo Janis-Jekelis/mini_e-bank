@@ -75,21 +75,26 @@ class DebitAccountController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        $user=Auth::user();
+        $user = Auth::user();
         $deposit = $request->get('debitAccountDeposit');
-        $transferToAccount=$request->get('transferToAccount');
-        $transferSum=$request->get('transfer');
+        $transferToAccount = $request->get('transferToAccount');
+        $transferSum = $request->get('transfer');
         if ($deposit !== null) {
             $debitAcc = $user->debitAccount()->get()->first();
 
             $debitAcc->deposit($deposit);
             $debitAcc->update();
         }
+        $request->validate([
+            'transfer' => [
+                'required',
+                new Amount(),
+                'gt:0'
+            ],
+            'transferToAccount'=>'required|exists:debit_accounts,account_number'
+        ]);
 
-        if ($transferToAccount!== null && ($transferSum!==null)){
-            $request->validate(['transfer'=>new Amount()]);
-        }
-        return redirect(route('home.show',['home'=>$user]));
+        return redirect(route('home.show', ['home' => $user]));
     }
 
     public function destroy($id)
