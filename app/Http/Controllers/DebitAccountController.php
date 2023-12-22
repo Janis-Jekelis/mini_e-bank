@@ -77,23 +77,23 @@ class DebitAccountController extends Controller
     {
         $user = Auth::user();
         $deposit = $request->get('debitAccountDeposit');
-        $transferToAccount = $request->get('transferToAccount');
-        $transferSum = $request->get('transfer');
         if ($deposit !== null) {
             $debitAcc = $user->debitAccount()->get()->first();
 
             $debitAcc->deposit($deposit);
             $debitAcc->update();
         }
+        if($request->get('transferToAccount')!==null || $request->get('transfer')!==null )
         $request->validate([
+            'transferToAccount' => 'required|exists:debit_accounts,account_number',
             'transfer' => [
                 'required',
                 new Amount(),
                 'gt:0'
-            ],
-            'transferToAccount'=>'required|exists:debit_accounts,account_number'
+            ]
         ]);
-
+            $receiver=DebitAccount::where('account_number', $request->get('transferToAccount'))->get()->first();
+            $receiver->deposit($request->get('transfer'));
         return redirect(route('home.show', ['home' => $user]));
     }
 
