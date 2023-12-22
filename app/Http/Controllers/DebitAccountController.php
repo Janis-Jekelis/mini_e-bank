@@ -76,14 +76,13 @@ class DebitAccountController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
+        $debitAcc = $user->debitAccount()->get()->first();
         $deposit = $request->get('debitAccountDeposit');
         if ($deposit !== null) {
-            $debitAcc = $user->debitAccount()->get()->first();
-
             $debitAcc->deposit($deposit);
             $debitAcc->update();
         }
-        if($request->get('transferToAccount')!==null || $request->get('transfer')!==null ) {
+        if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
             $request->validate([
                 'transferToAccount' => 'required|exists:debit_accounts,account_number',
                 'transfer' => [
@@ -93,7 +92,10 @@ class DebitAccountController extends Controller
                 ]
             ]);
             $receiver = DebitAccount::where('account_number', $request->get('transferToAccount'))->get()->first();
-            $receiver->debitAccount->deposit($request->get('transfer'));
+            $receiver->deposit($request->get('transfer'));
+            $receiver->update();
+            $debitAcc->withdraw($request->get('transfer'));
+            $debitAcc->update();
         }
         return redirect(route('home.show', ['home' => $user]));
     }
