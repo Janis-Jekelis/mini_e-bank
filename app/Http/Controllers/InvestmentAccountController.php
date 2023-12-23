@@ -7,6 +7,7 @@ use App\Models\accounts\InvestmentAccount;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class InvestmentAccountController extends Controller
@@ -22,11 +23,7 @@ class InvestmentAccountController extends Controller
 
     public function index(User $user)
     {
-        return view('accounts.invest',
-            [
-                'investAccount' => $user->investmentAccount,
-                'user' => $user
-            ]);
+        return view('accounts.invest', ['user' => Auth::user()]);
     }
 
     public function create(User $user): View
@@ -52,18 +49,9 @@ class InvestmentAccountController extends Controller
 
     }
 
-    public function update(Request $request, User  $user)
+    public function update(Request $request, User $user)
     {
-
-        $investAcc= $user->investmentAccount()->get();
-        $debitAcc=$user->debitAccount()->get();
-        $deposit = $request->get('investmentAccountDeposit');
-        if ($deposit !== null) {
-            $investAcc[0]->deposit($deposit);
-            $investAcc[0]->update();
-            $debitAcc[0]->withdraw($deposit);
-            $debitAcc[0]->update();
-        }
+        return redirect(route('home.show', ['home' => $user]));
     }
 
 

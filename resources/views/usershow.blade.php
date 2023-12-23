@@ -9,8 +9,9 @@
         <div class="row ps-5">
             <div class="col-3 border-end border-black ps-0 text-center">
                 <p class="mb-1">Account number</p>
-                <a href="{{route('debit.index',['user'=>Auth::id()])}}"
-                   class="fw-bold ">{{$user->debitAccount->account_number}}</a>
+                <a href="{{route('debit.index',['user'=>Auth::id()])}}" class="fw-bold ">
+                    {{$user->debitAccount->account_number}}
+                </a>
             </div>
             <div class="col-2 border-end border-black text-center ">
                 <p class="mb-1">Currency</p>
@@ -32,7 +33,9 @@
         <div class="row ps-5">
             <div class="col-3 border-end border-black ps-0 text-center">
                 <p class="mb-1">Account number</p>
-                <p class="fw-bold ">{{$user->investmentAccount->account_number}}</p>
+                <a href="{{route('invest.index',['user'=>Auth::id()])}}" class="fw-bold">
+                    {{$user->investmentAccount->account_number}}
+                </a>
             </div>
             <div class="col-2 border-end border-black text-center ">
                 <p class="mb-1">Currency</p>
