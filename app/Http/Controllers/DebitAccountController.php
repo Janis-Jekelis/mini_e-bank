@@ -34,12 +34,6 @@ class DebitAccountController extends Controller
         return view('accounts.create', ['user' => $user]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request, User $user): RedirectResponse
     {
         $debitAccount = (new DebitAccount())->fill([
