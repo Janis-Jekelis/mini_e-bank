@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\accounts\DebitAccount;
 use App\Models\User;
 use App\Rules\Amount;
+use App\Transfers\DepositOnDebitAccount;
+use App\Transfers\Transfer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class DebitAccountController extends Controller
@@ -62,12 +63,6 @@ class DebitAccountController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
@@ -76,11 +71,9 @@ class DebitAccountController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
-        $debitAcc = $user->debitAccount()->get()->first();
         $deposit = $request->get('debitAccountDeposit');
         if ($deposit !== null) {
-            $debitAcc->deposit($deposit);
-            $debitAcc->update();
+            DepositOnDebitAccount::make($user, $deposit);
         }
         if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
             $request->validate([
@@ -91,11 +84,7 @@ class DebitAccountController extends Controller
                     'gt:0'
                 ]
             ]);
-            $receiver = DebitAccount::where('account_number', $request->get('transferToAccount'))->get()->first();
-            $receiver->deposit($request->get('transfer'));
-            $receiver->update();
-            $debitAcc->withdraw($request->get('transfer'));
-            $debitAcc->update();
+            (new Transfer($user, $request->get('transferToAccount'), $request->get('transfer')))->make();
         }
         return redirect(route('home.show', ['home' => $user]));
     }
