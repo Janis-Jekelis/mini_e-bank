@@ -30,4 +30,44 @@
         </div>
     </form>
     {{$errors->first() }}
+
+    <div class="container">
+        <div class="row">
+            @foreach($assets as $symbol=>$assetValue)
+                <div class="col-3">
+                    <div class="card"
+                         onmouseover="handleMouseover(this)"
+                         onmouseout="handleMouseout(this)"
+                    >
+                        @php($value=number_format($assetValue,2))
+                        <span class="active">{{$symbol}}: {{$value }} {{$user->currency}}</span>
+                        <div class="buy" style="display: none">
+                            <form method="get"
+                                  class="card-body d-flex justify-content-around align-items-center">
+                                @csrf
+                                <input type="hidden" name="assetName" value="{{$symbol}}">
+                                <label for="{{$symbol}}">Amount:</label>
+                                <input class="border-black col-1 me-3 w-25" type="number" step="0.01" min="0"
+                                       id="{{$symbol}}"
+                                       name="assetAmount">
+                                <button class="btn btn-primary col-1 w-25" type="submit">Buy</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    <script>
+        function handleMouseover(card) {
+            card.querySelector('.buy').style.display = 'block';
+            card.querySelector('.active').style.fontWeight = 'bold';
+        }
+
+        function handleMouseout(card) {
+            card.querySelector('.buy').style.display = 'none';
+            card.querySelector('.active').style.fontWeight = 'inherit';
+        }
+    </script>
+
 @endsection

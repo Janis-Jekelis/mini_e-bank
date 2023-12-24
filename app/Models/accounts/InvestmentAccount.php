@@ -2,9 +2,12 @@
 
 namespace App\Models\accounts;
 
+use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InvestmentAccount extends Model
 {
@@ -18,9 +21,13 @@ class InvestmentAccount extends Model
         'currency',
     ];
 
-    public function user()
+    public function user():BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+    public function asset():HasMany
+    {
+        return $this->hasMany(Asset::class);
     }
     public function deposit(float $amount):void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\CurrencyRates;
 use App\Models\accounts\DebitAccount;
 use App\Models\accounts\InvestmentAccount;
 use App\Models\User;
@@ -24,14 +25,18 @@ class InvestmentAccountController extends Controller
         return $num;
     }
 
-    public function index(User $user)
+    public function index()
     {
-        return view('accounts.invest', ['user' => Auth::user()]);
+        return view('accounts.invest',
+            [
+                'user' => Auth::user(),
+                'assets'=>CurrencyRates::getAssets(Auth::user()->currency)
+            ]);
     }
 
     public function create(User $user): View
     {
-        return view('accounts.create', ['user' => $user]);
+        return view('accounts.create',['user' => $user]);
     }
 
     public function store(Request $request, User $user): RedirectResponse
@@ -52,14 +57,14 @@ class InvestmentAccountController extends Controller
 
     }
 
-    public function update(Request $request, User $user):RedirectResponse
+    public function update(Request $request, User $user): RedirectResponse
     {
         $user = Auth::user();
         if ($request->get('investAccountDeposit') !== null) {
             $request->validate([
                 'investAccountDeposit' => ['gt:0', new Amount()]
             ]);
-            (new DepositOnInvestAccount($user,$request->get('investAccountDeposit')))->make();
+            (new DepositOnInvestAccount($user, $request->get('investAccountDeposit')))->make();
             return redirect(route('home.show', ['home' => $user]))
                 ->with('message', 'Deposit on investment account successful');
         }
