@@ -29,5 +29,5 @@
             <button class="btn btn-primary col-1" type="submit">Deposit</button>
         </div>
     </form>
-
+    {{$errors->first() }}
 @endsection

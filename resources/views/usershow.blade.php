@@ -43,7 +43,7 @@
             </div>
             <div class="col-2 border-end border-black text-center ">
                 <p class="mb-1">Amount</p>
-                @php($investSum=number_format($user->investmentAccount->amount/100,2))
+                @php($investSum=number_format($user->investmentAccount->currency_amount/100,2))
                 <p class="fw-bold">{{$investSum}}</p>
             </div>
         </div>

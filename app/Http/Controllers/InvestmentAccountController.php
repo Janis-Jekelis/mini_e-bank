@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\accounts\DebitAccount;
 use App\Models\accounts\InvestmentAccount;
 use App\Models\User;
+use App\Rules\Amount;
+use App\Transfers\DepositOnInvestAccount;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,9 +52,18 @@ class InvestmentAccountController extends Controller
 
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user):RedirectResponse
     {
-        return redirect(route('home.show', ['home' => $user]));
+        $user = Auth::user();
+        if ($request->get('investAccountDeposit') !== null) {
+            $request->validate([
+                'investAccountDeposit' => ['gt:0', new Amount()]
+            ]);
+            (new DepositOnInvestAccount($user,$request->get('investAccountDeposit')))->make();
+            return redirect(route('home.show', ['home' => $user]))
+                ->with('message', 'Deposit on investment account successful');
+        }
+        throw new Exception('Unable to make deposit');
     }
 
 
