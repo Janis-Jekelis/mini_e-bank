@@ -7,6 +7,7 @@ use App\Models\accounts\DebitAccount;
 use App\Models\accounts\InvestmentAccount;
 use App\Models\User;
 use App\Rules\Amount;
+use App\Transfers\BuyAsset;
 use App\Transfers\DepositOnInvestAccount;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -30,13 +31,13 @@ class InvestmentAccountController extends Controller
         return view('accounts.invest',
             [
                 'user' => Auth::user(),
-                'assets'=>CurrencyRates::getAssets(Auth::user()->currency)
+                'assets' => CurrencyRates::getAssets(Auth::user()->currency)
             ]);
     }
 
     public function create(User $user): View
     {
-        return view('accounts.create',['user' => $user]);
+        return view('accounts.create', ['user' => $user]);
     }
 
     public function store(Request $request, User $user): RedirectResponse
@@ -57,18 +58,26 @@ class InvestmentAccountController extends Controller
 
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
+
         if ($request->get('investAccountDeposit') !== null) {
+            $debitAccFunds = $user->debitAccount()->get()->first()->amount;
             $request->validate([
-                'investAccountDeposit' => ['gt:0', new Amount()]
+                'investAccountDeposit' => ['gt:0', new Amount($debitAccFunds)]
             ]);
             (new DepositOnInvestAccount($user, $request->get('investAccountDeposit')))->make();
-            return redirect(route('home.show', ['home' => $user]))
-                ->with('message', 'Deposit on investment account successful');
         }
-        throw new Exception('Unable to make deposit');
+        if ($request->get('assetName') !== null) {
+            $asset = new BuyAsset($user, $request->get('assetName'), $request->get('assetAmount'));
+            $investAccFunds = $user->investmentAccount()->get()->first()->currency_amount;
+            $request->validate([
+                'assetAmount' => ['gt:0', new Amount($investAccFunds,$asset->getRate())]
+            ]);
+            $asset->buy();
+        }
+        return redirect(route('invest.index', ['user' => $user]));
     }
 
 

@@ -11,14 +11,14 @@ class Asset extends Model
 {
     use HasFactory;
 
-    protected $table = 'investment_accounts';
+    protected $table = 'assets';
     protected $primaryKey = 'id';
     protected $fillable = [
         'name',
         'amount',
         'open_rate'
     ];
-    public function investmentAcc():BelongsTo
+    public function investAcc():BelongsTo
     {
         return $this->belongsTo(InvestmentAccount::class);
     }

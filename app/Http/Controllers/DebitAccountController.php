@@ -70,11 +70,12 @@ class DebitAccountController extends Controller
             DepositOnDebitAccount::make($user, $deposit);
         }
         if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
+            $debitAccFunds=$user->debitAccount()->get()->first()->amount;
             $request->validate([
                 'transferToAccount' => 'required|exists:debit_accounts,account_number',
                 'transfer' => [
                     'required',
-                    new Amount(),
+                    new Amount($debitAccFunds),
                     'gt:0'
                 ]
             ]);
