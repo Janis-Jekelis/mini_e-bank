@@ -60,7 +60,7 @@
         </div>
     </div>
     @foreach($ownedAssets as $ownedAsset)
-        <p>{{$ownedAsset->name}}</p>
+        <p>{{$ownedAsset->name}} {{$ownedAsset->open_rate}} {{$ownedAsset->amount}}</p>
     @endforeach
 
     <script>
