@@ -18,7 +18,7 @@ class Asset extends Model
         'amount',
         'open_rate'
     ];
-    public function investAcc():BelongsTo
+    public function investmentAccount():BelongsTo
     {
         return $this->belongsTo(InvestmentAccount::class);
     }

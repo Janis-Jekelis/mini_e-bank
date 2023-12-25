@@ -10,12 +10,12 @@ class CreateAssetsTable extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('invest_acc_id');
+            $table->unsignedBigInteger('investment_account_id');
             $table->string('name');
             $table->decimal('amount');
             $table->decimal('open_rate');
             $table->timestamps();
-            $table->foreign('invest_acc_id')
+            $table->foreign('investment_account_id')
                 ->references('id')
                 ->on('investment_accounts')
                 ->onDelete('cascade');

@@ -59,6 +59,10 @@
             @endforeach
         </div>
     </div>
+    @foreach($ownedAssets as $ownedAsset)
+        <p>{{$ownedAsset->name}}</p>
+    @endforeach
+
     <script>
         function handleMouseover(card) {
             card.querySelector('.buy').style.display = 'block';

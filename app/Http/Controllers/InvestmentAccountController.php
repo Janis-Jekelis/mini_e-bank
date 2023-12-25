@@ -28,10 +28,13 @@ class InvestmentAccountController extends Controller
 
     public function index()
     {
+        $user=Auth::user();
         return view('accounts.invest',
             [
-                'user' => Auth::user(),
-                'assets' => CurrencyRates::getAssets(Auth::user()->currency)
+                'user' => $user,
+                'assets' => CurrencyRates::getAssets($user->currency),
+                'ownedAssets'=>$user->investmentAccount()->get()->first()
+                ->asset()->get()
             ]);
     }
 
