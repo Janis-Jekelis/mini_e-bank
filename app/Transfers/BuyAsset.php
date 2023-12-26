@@ -30,14 +30,14 @@ class BuyAsset
     {
         $account = $this->user->investmentAccount()->get()->first();
         $rate = $this->getRate();
-        $asset = (new Asset())->fill([
+        $asset = Asset::firstOrNew([
             'name' => $this->name,
-            'amount' => $this->amount,
-            'open_rate' => $rate
         ]);
+        $asset->amount += $this->amount;
+        $asset->open_rate = $rate;
         $asset->investmentAccount()->associate($account);
         $asset->save();
-        $account->withdraw(round($this->getRate() * $this->amount),2);
+        $account->withdraw(round($this->getRate() * $this->amount), 2);
         $account->update();
     }
 
