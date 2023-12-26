@@ -59,8 +59,29 @@
             @endforeach
         </div>
     </div>
+
     @foreach($ownedAssets as $ownedAsset)
-        <p>{{$ownedAsset->name}} {{$ownedAsset->open_rate}} {{$ownedAsset->amount}}</p>
+        @php([$currentRate,$currentValue]=$ownedAsset->getCurrentRateAndValue())
+        @php($color='')
+        @if($currentRate>$ownedAsset->open_rate)
+            @php($color='green')
+        @elseif($currentRate<$ownedAsset->open_rate)
+            @php($color='red')
+        @endif
+        <p style="color:{{$color}}">{{$ownedAsset->amount}} {{$ownedAsset->name}}
+            : {{$currentValue}} {{$user->currency}}
+        </p>
+        <form class="ps-2" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}">
+            @csrf
+            @method('PUT')
+            <div class="row justify-content-start align-items-center">
+                <input type="hidden" name="soldAsset" value="{{$ownedAsset->id}}">
+                <label class="col-1" for="sell">Sell</label>
+                <input class="border-black col-2 me-3" type="number" step="0.01" min="0" id="sell"
+                       name="assetSellAmount">
+                <button class="btn btn-primary col-1" type="submit">Sell</button>
+            </div>
+        </form>
     @endforeach
 
     <script>
@@ -68,7 +89,6 @@
             card.querySelector('.buy').style.display = 'block';
             card.querySelector('.active').style.fontWeight = 'bold';
         }
-
         function handleMouseout(card) {
             card.querySelector('.buy').style.display = 'none';
             card.querySelector('.active').style.fontWeight = 'inherit';

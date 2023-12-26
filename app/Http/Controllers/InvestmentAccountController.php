@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Api\CurrencyRates;
 use App\Models\accounts\DebitAccount;
 use App\Models\accounts\InvestmentAccount;
+use App\Models\Asset;
 use App\Models\User;
 use App\Rules\Amount;
 use App\Transfers\BuyAsset;
@@ -79,6 +80,14 @@ class InvestmentAccountController extends Controller
                 'assetAmount' => ['gt:0', new Amount($investAccFunds,$asset->getRate())]
             ]);
             $asset->buy();
+        }
+
+        if($request->get('soldAsset')!==0){
+            $asset=Asset::findOrFail($request->get('soldAsset'));
+            $request->validate([
+                'assetSellAmount'=>['gt:0',"lte:$asset->amount"]
+            ]);
+            $asset->sell($request->get('assetSellAmount'));
         }
         return redirect(route('invest.index', ['user' => $user]));
     }
