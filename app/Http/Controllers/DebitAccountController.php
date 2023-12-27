@@ -34,7 +34,7 @@ class DebitAccountController extends Controller
         return view('accounts.create', ['user' => $user]);
     }
 
-    public function store(Request $request, User $user): RedirectResponse
+    public function store(User $user): RedirectResponse
     {
         $debitAccount = (new DebitAccount())->fill([
             'account_number' => $this->createDebitAccountNr(),
@@ -46,12 +46,6 @@ class DebitAccountController extends Controller
         return redirect()->route('home.show', ['home' => $user->id]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
@@ -70,7 +64,7 @@ class DebitAccountController extends Controller
             DepositOnDebitAccount::make($user, $deposit);
         }
         if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
-            $debitAccFunds=$user->debitAccount()->get()->first()->amount;
+            $debitAccFunds = $user->debitAccount()->get()->first()->amount;
             $request->validate([
                 'transferToAccount' => 'required|exists:debit_accounts,account_number',
                 'transfer' => [

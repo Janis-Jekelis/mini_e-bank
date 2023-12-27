@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Api\CurrencyRates;
-use App\Models\accounts\DebitAccount;
 use App\Models\accounts\InvestmentAccount;
 use App\Models\Asset;
 use App\Models\User;
 use App\Rules\Amount;
 use App\Transfers\BuyAsset;
 use App\Transfers\DepositOnInvestAccount;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+
 
 class InvestmentAccountController extends Controller
 {
@@ -29,13 +30,30 @@ class InvestmentAccountController extends Controller
 
     public function index()
     {
-        $user=Auth::user();
+        $user = Auth::user();
+        $assets = CurrencyRates::getAssets($user->currency);
+        $perPage = 40;
+        $page = request()->get('page', 1);
+        $currentPageItems = array_slice(get_object_vars($assets), ($page - 1) * $perPage, $perPage);
+        $assets = new LengthAwarePaginator(
+            $currentPageItems,
+            count(get_object_vars($assets)),
+            $perPage,
+            $page,
+            ['path' => Paginator::resolveCurrentPath()]
+        );
+        if ($user->investmentAccount()->get()->first()->asset()) {
+            $ownedAssets = $user->investmentAccount()->get()->first()
+                ->asset()->get();
+        } else {
+            $ownedAssets = [];
+           dd($user->investmentAccount()->get()->first()->asset);
+        }
         return view('accounts.invest',
             [
                 'user' => $user,
-                'assets' => CurrencyRates::getAssets($user->currency),
-                'ownedAssets'=>$user->investmentAccount()->get()->first()
-                ->asset()->get()
+                'assets' => $assets,
+                'ownedAssets' => $ownedAssets
             ]);
     }
 
@@ -53,7 +71,6 @@ class InvestmentAccountController extends Controller
         ]);
         $investAccount->user()->associate($user);
         $investAccount->save();
-
         return redirect()->route('home.show', ['home' => $user->id]);
     }
 
@@ -65,7 +82,6 @@ class InvestmentAccountController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
-
         if ($request->get('investAccountDeposit') !== null) {
             $debitAccFunds = $user->debitAccount()->get()->first()->amount;
             $request->validate([
@@ -77,17 +93,30 @@ class InvestmentAccountController extends Controller
             $asset = new BuyAsset($user, $request->get('assetName'), $request->get('assetAmount'));
             $investAccFunds = $user->investmentAccount()->get()->first()->currency_amount;
             $request->validate([
-                'assetAmount' => ['gt:0', new Amount($investAccFunds,$asset->getRate())]
+                'assetAmount' => ['gt:0', new Amount($investAccFunds, $asset->getRate())]
             ]);
             $asset->buy();
         }
 
-        if($request->get('soldAsset')!==0){
-            $asset=Asset::findOrFail($request->get('soldAsset'));
+        if ($request->get('soldAsset') !== null) {
+            $asset = Asset::findOrFail($request->get('soldAsset'));
             $request->validate([
-                'assetSellAmount'=>['gt:0',"lte:$asset->amount"]
+                'assetSellAmount' => ['gt:0', "lte:$asset->amount"]
             ]);
             $asset->sell($request->get('assetSellAmount'));
+        }
+
+        if ($request->get('withdraw') !== null) {
+            $amount = $request->get('withdraw');
+            $debitAcc = $user->debitAccount()->get()->first();
+            $investAcc = $user->investmentAccount()->get()->first();
+            $request->validate([
+                'withdraw' => ['gt:0', new Amount($investAcc->currency_amount)]
+            ]);
+            $debitAcc->deposit($amount);
+            $debitAcc->update();
+            $investAcc->withdraw($amount);
+            $investAcc->update();
         }
         return redirect(route('invest.index', ['user' => $user]));
     }

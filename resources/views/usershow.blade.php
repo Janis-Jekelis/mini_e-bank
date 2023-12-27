@@ -2,7 +2,11 @@
 @section('content')
 
     @if($debitAccount)
-        <a href="{{ route('debit.create', $user->id) }}">Create debit account</a>
+        <form method="post" action="{{ route('debit.store', ['user'=>$user]) }}">
+            @csrf
+            <input type="hidden">
+            <button class="btn btn-primary" type="submit">Create debit account</button>
+        </form>
     @else
         <h4 class="ps-2">Debit account:</h4>
         <hr>
@@ -25,8 +29,13 @@
         </div>
         <hr>
     @endif
+    @if(!$debitAccount)
     @if($investAccount)
-        <a href="{{ route('invest.create', $user->id) }}">Create investment account</a>
+        <form method="post" action="{{ route('invest.store', ['user'=>$user]) }}">
+            @csrf
+            <input type="hidden">
+            <button class="btn btn-primary" type="submit">Create debit account</button>
+        </form>
     @else
         <h4 class="ps-2">Investment account:</h4>
         <hr>
@@ -48,6 +57,7 @@
             </div>
         </div>
         <hr>
+    @endif
     @endif
 @endsection
 

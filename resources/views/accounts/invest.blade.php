@@ -18,8 +18,7 @@
         </div>
     </div>
     <hr>
-
-    <form class="ps-2" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}">
+    <form class="ps-2 ms-5" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}">
         @csrf
         @method('PUT')
         <div class="row justify-content-start align-items-center">
@@ -29,13 +28,23 @@
             <button class="btn btn-primary col-1" type="submit">Deposit</button>
         </div>
     </form>
+    <form class="ps-2 ms-5" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user->id])}}">
+        @csrf
+        @method('PUT')
+        <div class="row justify-content-start align-items-center">
+            <label class="col-1" for="withdraw">Withdraw ({{$user->currency}}):</label>
+            <input class="border-black col-2 me-3" type="number" step="0.01" min="0" id="withdraw"
+                   name="withdraw">
+            <button class="btn btn-primary col-1" type="submit">Withdraw</button>
+        </div>
+    </form>
     {{$errors->first() }}
-
-    <div class="container">
+    <div class="container mt-3">
+        <h2 class="text-center mb-4">Asset catalog</h2>
         <div class="row">
             @foreach($assets as $symbol=>$assetValue)
                 <div class="col-3">
-                    <div class="card"
+                    <div class="card mb-1"
                          onmouseover="handleMouseover(this)"
                          onmouseout="handleMouseout(this)"
                     >
@@ -57,38 +66,50 @@
                     </div>
                 </div>
             @endforeach
+            <div class="d-flex justify-content-center mt-2">{{ $assets->links() }}</div>
         </div>
     </div>
-
-    @foreach($ownedAssets as $ownedAsset)
-        @php([$currentRate,$currentValue]=$ownedAsset->getCurrentRateAndValue())
-        @php($color='')
-        @if($currentRate>$ownedAsset->open_rate)
-            @php($color='green')
-        @elseif($currentRate<$ownedAsset->open_rate)
-            @php($color='red')
-        @endif
-        <p style="color:{{$color}}">{{$ownedAsset->amount}} {{$ownedAsset->name}}
-            : {{$currentValue}} {{$user->currency}}
-        </p>
-        <form class="ps-2" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}">
-            @csrf
-            @method('PUT')
-            <div class="row justify-content-start align-items-center">
-                <input type="hidden" name="soldAsset" value="{{$ownedAsset->id}}">
-                <label class="col-1" for="sell">Sell</label>
-                <input class="border-black col-2 me-3" type="number" step="0.01" min="0" id="sell"
-                       name="assetSellAmount">
-                <button class="btn btn-primary col-1" type="submit">Sell</button>
-            </div>
-        </form>
-    @endforeach
-
+    <div class="container mt-4">
+        <div class="row">
+            @foreach($ownedAssets as $ownedAsset)
+                <div class="col-3">
+                    <div class="card mb-1"
+                         onmouseover="this.querySelector('.ownedAsset').style.display = 'block';"
+                         onmouseout="this.querySelector('.ownedAsset').style.display = 'none';">
+                        @php([$currentRate,$currentValue]=$ownedAsset->getCurrentRateAndValue())
+                        @php($color='')
+                        @if($currentRate>$ownedAsset->open_rate)
+                            @php($color='green')
+                        @elseif($currentRate<$ownedAsset->open_rate)
+                            @php($color='red')
+                        @endif
+                        <p class="text-center" style="color:{{$color}}">{{$ownedAsset->amount}} {{$ownedAsset->name}}
+                            : {{$currentValue}} {{$user->currency}}
+                        </p>
+                        <div class="ownedAsset" style="display: none">
+                            <form class="ps-2 " method="post"
+                                  action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="soldAsset" value="{{$ownedAsset->id}}">
+                                <label class="col-2 ps-2" for="{{$ownedAsset->id}}">Sell</label>
+                                <input class="border-black col-2 me-3" type="number" step="0.01" min="0"
+                                       id="{{$ownedAsset->id}}"
+                                       name="assetSellAmount">
+                                <button class="btn btn-primary col-1 w-25 mb-3" type="submit">Sell</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
     <script>
         function handleMouseover(card) {
             card.querySelector('.buy').style.display = 'block';
             card.querySelector('.active').style.fontWeight = 'bold';
         }
+
         function handleMouseout(card) {
             card.querySelector('.buy').style.display = 'none';
             card.querySelector('.active').style.fontWeight = 'inherit';
