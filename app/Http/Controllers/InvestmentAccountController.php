@@ -14,19 +14,12 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 
 class InvestmentAccountController extends Controller
 {
-    private function createInvestAccountNr(): string
-    {
-        $num = "ICODE";
-        for ($i = 0; $i < 10; $i++) {
-            $num .= rand(0, 9);
-        }
-        return $num;
-    }
 
     public function index()
     {
@@ -47,7 +40,7 @@ class InvestmentAccountController extends Controller
                 ->asset()->get();
         } else {
             $ownedAssets = [];
-           dd($user->investmentAccount()->get()->first()->asset);
+            dd($user->investmentAccount()->get()->first()->asset);
         }
         return view('accounts.invest',
             [
@@ -121,5 +114,22 @@ class InvestmentAccountController extends Controller
         return redirect(route('invest.index', ['user' => $user]));
     }
 
+    private function createInvestAccountNr(): string
+    {
+        $num = "ICODE";
+        do {
+            for ($i = 0; $i < 10; $i++) {
+                $num .= rand(0, 9);
+            }
+        } while ($this->accountNumberExists($num));
 
+        return $num;
+    }
+
+    private function accountNumberExists(string $accountNumber): bool
+    {
+        return DB::table('debit_accounts')
+            ->where('account_number', "$accountNumber")
+            ->exists();
+    }
 }

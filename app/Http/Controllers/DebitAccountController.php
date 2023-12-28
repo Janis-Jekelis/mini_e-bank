@@ -10,19 +10,11 @@ use App\Transfers\Transfer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DebitAccountController extends Controller
 {
-    private function createDebitAccountNr(): string
-    {
-        $num = "DCODE";
-        for ($i = 0; $i < 10; $i++) {
-            $num .= rand(0, 9);
-        }
-        return $num;
-    }
-
     public function index(): View
     {
         return view('accounts.debit', ['user' => Auth::user()]);
@@ -75,11 +67,30 @@ class DebitAccountController extends Controller
             ]);
             (new Transfer($user, $request->get('transferToAccount'), $request->get('transfer')))->make();
         }
-        return redirect(route('home.show', ['home' => $user]));
+        return redirect(route('debit.index', ['user' => $user]));
     }
 
     public function destroy($id)
     {
         //
+    }
+
+    private function createDebitAccountNr(): string
+    {
+        $num = "DCODE";
+        do {
+            for ($i = 0; $i < 10; $i++) {
+                $num .= rand(0, 9);
+            }
+        } while ($this->accountNumberExists($num));
+
+        return $num;
+    }
+
+    private function accountNumberExists(string $accountNumber): bool
+    {
+        return DB::table('debit_accounts')
+            ->where('account_number', "$accountNumber")
+            ->exists();
     }
 }

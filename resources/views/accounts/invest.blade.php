@@ -2,7 +2,7 @@
 @section('content')
     <h4 class="ps-2">Investment account:</h4>
     <hr>
-    <div class="row ps-5">
+    <div class="row ps-5 d-flex align-items-center">
         <div class="col-3 border-end border-black ps-0 text-center">
             <p class="mb-1">Account number</p>
             <p class="fw-bold ">{{ $user->investmentAccount->account_number }}</p>
@@ -16,9 +16,26 @@
             @php($investSum=number_format($user->investmentAccount->currency_amount/100,2))
             <p class="fw-bold">{{$investSum}}</p>
         </div>
+        <div class="col-2 text-end">
+            <button class="btn btn-primary" onclick="
+            document.querySelector('.deposit').style.display = 'block';
+            document.querySelector('.withdraw').style.display = 'none';">
+                Deposit
+            </button>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary"onclick="
+            document.querySelector('.deposit').style.display = 'none';
+            document.querySelector('.withdraw').style.display = 'block';">
+                Withdraw
+            </button>
+        </div>
     </div>
     <hr>
-    <form class="ps-2 ms-5" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}">
+    <form class="ps-2 ms-5 deposit"
+          method="post"
+          action="{{route('invest.update',['user'=>$user, 'invest'=>$user])}}"
+          style="display: none">
         @csrf
         @method('PUT')
         <div class="row justify-content-start align-items-center">
@@ -28,7 +45,10 @@
             <button class="btn btn-primary col-1" type="submit">Deposit</button>
         </div>
     </form>
-    <form class="ps-2 ms-5" method="post" action="{{route('invest.update',['user'=>$user, 'invest'=>$user->id])}}">
+    <form class="ps-2 ms-5 withdraw"
+          method="post"
+          action="{{route('invest.update',['user'=>$user, 'invest'=>$user->id])}}"
+          style="display: none">
         @csrf
         @method('PUT')
         <div class="row justify-content-start align-items-center">
@@ -70,6 +90,9 @@
         </div>
     </div>
     <div class="container mt-4">
+        @unless(count($ownedAssets)==0)
+            <h2 class="text-center">Owned assets</h2>
+        @endunless
         <div class="row">
             @foreach($ownedAssets as $ownedAsset)
                 <div class="col-3">
@@ -93,7 +116,7 @@
                                 @method('PUT')
                                 <input type="hidden" name="soldAsset" value="{{$ownedAsset->id}}">
                                 <label class="col-2 ps-2" for="{{$ownedAsset->id}}">Sell</label>
-                                <input class="border-black col-2 me-3" type="number" step="0.01" min="0"
+                                <input class="border-black col-2 me-3 w-25" type="number" step="0.01" min="0"
                                        id="{{$ownedAsset->id}}"
                                        name="assetSellAmount">
                                 <button class="btn btn-primary col-1 w-25 mb-3" type="submit">Sell</button>
