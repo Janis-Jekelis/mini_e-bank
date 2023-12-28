@@ -24,7 +24,7 @@
             </button>
         </div>
         <div class="col-2">
-            <button class="btn btn-primary"onclick="
+            <button class="btn btn-primary" onclick="
             document.querySelector('.deposit').style.display = 'none';
             document.querySelector('.withdraw').style.display = 'block';">
                 Withdraw
@@ -58,7 +58,6 @@
             <button class="btn btn-primary col-1" type="submit">Withdraw</button>
         </div>
     </form>
-    {{$errors->first() }}
     <div class="container mt-3">
         <h2 class="text-center mb-4">Asset catalog</h2>
         <div class="row">
@@ -138,4 +137,11 @@
             card.querySelector('.active').style.fontWeight = 'inherit';
         }
     </script>
+    @if ($errors->any())
+        <script>
+            window.onload = function () {
+                window.alert("{{ $errors->first() }}");
+            };
+        </script>
+    @endif
 @endsection

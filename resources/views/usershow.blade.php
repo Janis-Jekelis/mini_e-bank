@@ -5,7 +5,7 @@
         <form method="post" action="{{ route('debit.store', ['user'=>$user]) }}">
             @csrf
             <input type="hidden">
-            <button class="btn btn-primary" type="submit">Create debit account</button>
+            <button class="btn btn-primary ms-2 mt-2" type="submit">Create debit account</button>
         </form>
     @else
         <h4 class="ps-2">Debit account:</h4>
@@ -34,7 +34,7 @@
         <form method="post" action="{{ route('invest.store', ['user'=>$user]) }}">
             @csrf
             <input type="hidden">
-            <button class="btn btn-primary" type="submit">Create investment account</button>
+            <button class="btn btn-primary ms-2 mt-2" type="submit">Create investment account</button>
         </form>
     @else
         <h4 class="ps-2">Investment account:</h4>

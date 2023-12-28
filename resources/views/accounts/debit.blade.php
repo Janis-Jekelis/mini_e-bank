@@ -61,6 +61,11 @@
             <button class="btn btn-primary col-1" type="submit">Transfer</button>
         </div>
     </form>
-    {{$errors->first() }}
-
+    @if ($errors->any())
+        <script>
+            window.onload = function () {
+                window.alert("{{ $errors->first() }}");
+            };
+        </script>
+    @endif
 @endsection

@@ -53,6 +53,9 @@ class DebitAccountController extends Controller
         $user = Auth::user();
         $deposit = $request->get('debitAccountDeposit');
         if ($deposit !== null) {
+            $request->validate([
+                'debitAccountDeposit'=>'gt:0'
+            ]);
             DepositOnDebitAccount::make($user, $deposit);
         }
         if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
