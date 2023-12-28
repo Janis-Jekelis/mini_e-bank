@@ -6,6 +6,7 @@ use App\Models\accounts\DebitAccount;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -52,15 +53,19 @@ class UserController extends Controller
 
     }
 
-    public function edit($id)
+    public function edit():View
     {
-        //
+        return view('useredit',['user'=>Auth::user()]);
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request):RedirectResponse
     {
-        //
+        $user=Auth::user();
+        $user->update([
+            'name'=>$request->get('name')
+        ]);
+        return redirect(route('home.show',['home'=>$user]));
     }
 
 

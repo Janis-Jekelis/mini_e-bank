@@ -53,7 +53,10 @@
                             </li>
                         @endif
                     @else
-                        <span class="me-5">Loged in as: {{ Auth::user()->name }}</span>
+                        <span class="me-2">Logged in as: </span>
+                        <a class="me-5" href="{{route('home.edit',['home'=>Auth::user()])}}">
+                            {{ Auth::user()->name }} {{ Auth::user()->surname }}
+                        </a>
                         <div>
                             <a class="ms-5 ps-5" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
