@@ -50,6 +50,7 @@ class DebitAccountController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        $message='';
         $user = Auth::user();
         $deposit = $request->get('debitAccountDeposit');
         if ($deposit !== null) {
@@ -57,6 +58,7 @@ class DebitAccountController extends Controller
                 'debitAccountDeposit'=>'gt:0'
             ]);
             DepositOnDebitAccount::make($user, $deposit);
+            $message='deposit successful';
         }
         if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
             $debitAccFunds = $user->debitAccount()->get()->first()->amount;
@@ -69,8 +71,9 @@ class DebitAccountController extends Controller
                 ]
             ]);
             (new Transfer($user, $request->get('transferToAccount'), $request->get('transfer')))->make();
+            $message='Transfer successful';
         }
-        return redirect(route('debit.index', ['user' => $user]));
+        return redirect(route('debit.index', ['user' => $user]))->with('message', $message);
     }
 
     public function destroy($id)

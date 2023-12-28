@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-
     @if($debitAccount)
         <form method="post" action="{{ route('debit.store', ['user'=>$user]) }}">
             @csrf

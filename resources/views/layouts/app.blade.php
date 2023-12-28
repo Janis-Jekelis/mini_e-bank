@@ -68,7 +68,7 @@
             </div>
         </div>
     </nav>
-
+    <p class="text-center" style="color: green">{{(session('message'))}}</p>
     <main class="py-4">
         @yield('content')
     </main>

@@ -75,20 +75,25 @@ class InvestmentAccountController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
+        $message='';
         if ($request->get('investAccountDeposit') !== null) {
             $debitAccFunds = $user->debitAccount()->get()->first()->amount;
             $request->validate([
                 'investAccountDeposit' => ['gt:0', new Amount($debitAccFunds)]
             ]);
             (new DepositOnInvestAccount($user, $request->get('investAccountDeposit')))->make();
+            $message='Deposit successful';
         }
         if ($request->get('assetName') !== null) {
-            $asset = new BuyAsset($user, $request->get('assetName'), $request->get('assetAmount'));
+            $assetName=$request->get('assetName');
+            $assetAmount=$request->get('assetAmount');
+            $asset = new BuyAsset($user, $assetName, $assetAmount);
             $investAccFunds = $user->investmentAccount()->get()->first()->currency_amount;
             $request->validate([
                 'assetAmount' => ['gt:0', new Amount($investAccFunds, $asset->getRate())]
             ]);
             $asset->buy();
+            $message="purchased $assetAmount units of $assetName";
         }
 
         if ($request->get('soldAsset') !== null) {
@@ -97,6 +102,7 @@ class InvestmentAccountController extends Controller
                 'assetSellAmount' => ['gt:0', "lte:$asset->amount"]
             ]);
             $asset->sell($request->get('assetSellAmount'));
+            $message="sold {$request->get('assetSellAmount')} units of $asset->name";
         }
 
         if ($request->get('withdraw') !== null) {
@@ -110,8 +116,9 @@ class InvestmentAccountController extends Controller
             $debitAcc->update();
             $investAcc->withdraw($amount);
             $investAcc->update();
+            $message='Withdraw successful';
         }
-        return redirect(route('invest.index', ['user' => $user]));
+        return redirect(route('invest.index', ['user' => $user]))->with('message',$message);
     }
 
     private function createInvestAccountNr(): string
