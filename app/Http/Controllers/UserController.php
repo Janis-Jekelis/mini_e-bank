@@ -2,28 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\accounts\DebitAccount;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class UserController extends Controller
 {
-
-    public function index(): View
-    {
-        return view('index', ['users' => User::all()]);
-    }
-
-    public function create(): View
-    {
-        return view('usercreate', ['currencies' => ['EUR', 'GBP', 'USD']]);
-    }
-
     public function store(Request $request)
     {
         $user = (new User)->fill([
@@ -51,14 +38,12 @@ class UserController extends Controller
                 'debitAccount' => $debitAccount,
                 'investAccount' => $investAccount
             ]);
-
     }
 
     public function edit(): View
     {
         return view('useredit', ['user' => Auth::user()]);
     }
-
 
     public function update(Request $request): RedirectResponse
     {
@@ -83,12 +68,12 @@ class UserController extends Controller
     }
 
 
-    public function destroy():RedirectResponse
+    public function destroy(): RedirectResponse
     {
-        $user=Auth::user();
-        $debitAcc=$user->debitAccount()->get()->first();
-        $investAcc=$user->investmentAccount()->get()->first();
-        if($debitAcc!==null && $investAcc!==null){
+        $user = Auth::user();
+        $debitAcc = $user->debitAccount()->get()->first();
+        $investAcc = $user->investmentAccount()->get()->first();
+        if ($debitAcc !== null && $investAcc !== null) {
             return redirect()->route('home.edit', ['home' => $user])->withErrors([
 
                 'errors' => 'Before deleting profile make sure all accounts are closed'

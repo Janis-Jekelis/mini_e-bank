@@ -4,10 +4,8 @@ declare(strict_types=1);
 namespace App\Transfers;
 
 use App\Api\CurrencyRates;
-use App\Models\accounts\InvestmentAccount;
 use App\Models\Asset;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
 class BuyAsset
 {

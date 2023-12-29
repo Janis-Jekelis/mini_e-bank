@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Transfers;
 
-use App\Models\accounts\DebitAccount;
 use App\Models\User;
 
 class DepositOnDebitAccount

@@ -10,23 +10,20 @@ use stdClass;
 
 class CurrencyRates
 {
-    private const API = 'https://api.coinbase.com/v2/exchange-rates?currency=';
-    private string $baseCurrency;
-    private string $targetCurrency;
-
     public static function getRate(string $baseCurrency, string $targetCurrency): float
     {
-       $response=self::Connect($baseCurrency);
+        $response = self::Connect($baseCurrency);
         return floatval($response->data->rates->{$targetCurrency});
     }
 
-    public static function getAssets(string $baseCurrency):stdClass
+    public static function getAssets(string $baseCurrency): stdClass
     {
-        $response=self::Connect($baseCurrency);
+        $response = self::Connect($baseCurrency);
         return $response->data->rates;
 
     }
-    private static function Connect(string $baseCurrency):stdClass
+
+    private static function Connect(string $baseCurrency): stdClass
     {
         $client = new Client();
         try {
