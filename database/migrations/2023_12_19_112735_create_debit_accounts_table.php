@@ -18,7 +18,7 @@ class CreateDebitAccountsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('account_number',15);
             $table->string('currency',3);
-            $table->float('amount')->default(0);
+            $table->bigInteger('amount')->default(0);
             $table->timestamps();
             $table->foreign('user_id')
                 ->references('id')

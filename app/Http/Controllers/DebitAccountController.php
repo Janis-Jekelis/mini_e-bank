@@ -76,7 +76,7 @@ class DebitAccountController extends Controller
     {
         $debitAccount = $user->debitAccount()->get()->first();
         $investmentAccount = $user->investmentAccount()->get()->first();
-        if (($debitAccount->amount) !== 0.0 || $investmentAccount !== null) {
+        if (($debitAccount->amount) !== 0 || $investmentAccount !== null) {
             return redirect()->route('debit.index', ['user' => $user])->withErrors([
                 'errors' => 'Before closing account make sure investment account is closed' .
                     'and there are no funds on accounts'
