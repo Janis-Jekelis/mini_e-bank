@@ -37,7 +37,7 @@ class BuyAsset
         $asset->open_rate = $rate;
         $asset->investmentAccount()->associate($account);
         $asset->save();
-        $account->withdraw(round($this->getRate() * $this->amount), 2);
+        $account->withdraw(round(($this->getRate() * $this->amount), 2));
         $account->update();
     }
 

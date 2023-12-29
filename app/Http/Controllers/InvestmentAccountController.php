@@ -15,7 +15,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
 
 
 class InvestmentAccountController extends Controller
@@ -50,12 +49,7 @@ class InvestmentAccountController extends Controller
             ]);
     }
 
-    public function create(User $user): View
-    {
-        return view('accounts.create', ['user' => $user]);
-    }
-
-    public function store(Request $request, User $user): RedirectResponse
+    public function store(User $user): RedirectResponse
     {
         $investAccount = (new InvestmentAccount())->fill([
             'account_number' => $this->createInvestAccountNr(),
@@ -67,33 +61,28 @@ class InvestmentAccountController extends Controller
         return redirect()->route('home.show', ['home' => $user->id]);
     }
 
-    public function show($id)
-    {
-
-    }
-
     public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
-        $message='';
+        $message = '';
         if ($request->get('investAccountDeposit') !== null) {
             $debitAccFunds = $user->debitAccount()->get()->first()->amount;
             $request->validate([
                 'investAccountDeposit' => ['gt:0', new Amount($debitAccFunds)]
             ]);
             (new DepositOnInvestAccount($user, $request->get('investAccountDeposit')))->make();
-            $message='Deposit successful';
+            $message = 'Deposit successful';
         }
         if ($request->get('assetName') !== null) {
-            $assetName=$request->get('assetName');
-            $assetAmount=$request->get('assetAmount');
+            $assetName = $request->get('assetName');
+            $assetAmount = $request->get('assetAmount');
             $asset = new BuyAsset($user, $assetName, $assetAmount);
             $investAccFunds = $user->investmentAccount()->get()->first()->currency_amount;
             $request->validate([
                 'assetAmount' => ['gt:0', new Amount($investAccFunds, $asset->getRate())]
             ]);
             $asset->buy();
-            $message="purchased $assetAmount units of $assetName";
+            $message = "purchased $assetAmount units of $assetName";
         }
 
         if ($request->get('soldAsset') !== null) {
@@ -102,7 +91,7 @@ class InvestmentAccountController extends Controller
                 'assetSellAmount' => ['gt:0', "lte:$asset->amount"]
             ]);
             $asset->sell($request->get('assetSellAmount'));
-            $message="sold {$request->get('assetSellAmount')} units of $asset->name";
+            $message = "sold {$request->get('assetSellAmount')} units of $asset->name";
         }
 
         if ($request->get('withdraw') !== null) {
@@ -116,9 +105,23 @@ class InvestmentAccountController extends Controller
             $debitAcc->update();
             $investAcc->withdraw($amount);
             $investAcc->update();
-            $message='Withdraw successful';
+            $message = 'Withdraw successful';
         }
-        return redirect(route('invest.index', ['user' => $user]))->with('message',$message);
+        return redirect(route('invest.index', ['user' => $user]))->with('message', $message);
+    }
+
+    public function destroy(User $user): RedirectResponse
+    {
+        $account = $user->investmentAccount()->get()->first();
+        $assets = $account->asset()->get()->first();
+        if (($account->currency_amount) !== 0.0 || $assets !== null ) {
+            return redirect()->route('invest.index', ['user' => $user])->withErrors([
+                    'errors' =>'Before closing account make sure there arent any owned assets or funds on account'
+                ]
+            );
+        }
+        $account->delete();
+        return redirect()->route('home.show', ['home' => $user->id])->with('message','Investment account closed');
     }
 
     private function createInvestAccountNr(): string

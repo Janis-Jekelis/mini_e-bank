@@ -16,19 +16,31 @@
             @php($investSum=number_format($user->investmentAccount->currency_amount/100,2))
             <p class="fw-bold">{{$investSum}}</p>
         </div>
-        <div class="col-2 text-end">
-            <button class="btn btn-primary" onclick="
+        <div class="col-4 d-flex">
+            <div class="col-4 text-center">
+                <button class="btn btn-primary" onclick="
             document.querySelector('.deposit').style.display = 'block';
             document.querySelector('.withdraw').style.display = 'none';">
-                Deposit
-            </button>
-        </div>
-        <div class="col-2">
-            <button class="btn btn-primary" onclick="
+                    Deposit
+                </button>
+            </div>
+            <div class="col-4 text-center">
+                <button class="btn btn-primary" onclick="
             document.querySelector('.deposit').style.display = 'none';
             document.querySelector('.withdraw').style.display = 'block';">
-                Withdraw
-            </button>
+                    Withdraw
+                </button>
+            </div>
+            <div class="col-4 text-end">
+                <form method="post" action="{{route('invest.destroy',['user'=>$user,'invest'=>$user])}}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" >
+                        Close account
+                    </button>
+                </form>
+
+            </div>
         </div>
     </div>
     <hr>

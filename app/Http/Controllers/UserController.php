@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -47,25 +48,38 @@ class UserController extends Controller
             'usershow',
             [
                 'user' => $user,
-                'debitAccount'=>$debitAccount,
-                'investAccount'=>$investAccount
+                'debitAccount' => $debitAccount,
+                'investAccount' => $investAccount
             ]);
 
     }
 
-    public function edit():View
+    public function edit(): View
     {
-        return view('useredit',['user'=>Auth::user()]);
+        return view('useredit', ['user' => Auth::user()]);
     }
 
 
-    public function update(Request $request):RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
-        $user=Auth::user();
-        $user->update([
-            'name'=>$request->get('name')
+        $user = Auth::user();
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', 'min:2'],
+            'surname' => ['required', 'string', 'max:255', 'min:2'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($user->email, 'email'),
+            ],
         ]);
-        return redirect(route('home.show',['home'=>$user]));
+        $user->update([
+            'name' => $request->get('name'),
+            'surname' => $request->get('surname'),
+            'email' => $request->get('email')
+        ]);
+        return redirect(route('home.show', ['home' => $user]));
     }
 
 

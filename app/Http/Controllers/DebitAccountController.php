@@ -20,12 +20,6 @@ class DebitAccountController extends Controller
         return view('accounts.debit', ['user' => Auth::user()]);
     }
 
-
-    public function create(User $user): View
-    {
-        return view('accounts.create', ['user' => $user]);
-    }
-
     public function store(User $user): RedirectResponse
     {
         $debitAccount = (new DebitAccount())->fill([
@@ -36,16 +30,6 @@ class DebitAccountController extends Controller
         $debitAccount->user()->associate($user);
         $debitAccount->save();
         return redirect()->route('home.show', ['home' => $user->id]);
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
     }
 
     public function update(Request $request): RedirectResponse
@@ -78,7 +62,7 @@ class DebitAccountController extends Controller
 
     public function destroy($id)
     {
-        //
+
     }
 
     private function createDebitAccountNr(): string
