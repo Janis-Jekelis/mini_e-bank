@@ -34,16 +34,28 @@ class DebitAccountController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        $message='';
+        $message = '';
         $user = Auth::user();
         $deposit = $request->get('debitAccountDeposit');
         if ($deposit !== null) {
             $request->validate([
-                'debitAccountDeposit'=>'gt:0'
+                'debitAccountDeposit' => 'gt:0'
             ]);
             DepositOnDebitAccount::make($user, $deposit);
-            $message='deposit successful';
+            $message = 'deposit successful';
         }
+
+        if ($request->get('withdraw') !== null) {
+            $amount = $request->get('withdraw');
+            $debitAcc = $user->debitAccount()->get()->first();
+            $request->validate([
+                'withdraw' => ['gt:0', new Amount($debitAcc->amount)]
+            ]);
+            $debitAcc->withdraw($amount);
+            $debitAcc->update();
+            $message = 'Withdraw successful';
+        }
+
         if ($request->get('transferToAccount') !== null || $request->get('transfer') !== null) {
             $debitAccFunds = $user->debitAccount()->get()->first()->amount;
             $request->validate([
@@ -55,14 +67,23 @@ class DebitAccountController extends Controller
                 ]
             ]);
             (new Transfer($user, $request->get('transferToAccount'), $request->get('transfer')))->make();
-            $message='Transfer successful';
+            $message = 'Transfer successful';
         }
         return redirect(route('debit.index', ['user' => $user]))->with('message', $message);
     }
 
-    public function destroy($id)
+    public function destroy(User $user)
     {
-
+        $debitAccount = $user->debitAccount()->get()->first();
+        $investmentAccount = $user->investmentAccount()->get()->first();
+        if (($debitAccount->amount) !== 0.0 || $investmentAccount !== null) {
+            return redirect()->route('debit.index', ['user' => $user])->withErrors([
+                'errors' => 'Before closing account make sure investment account is closed' .
+                    'and there are no funds on accounts'
+            ]);
+        }
+        $debitAccount->delete();
+        return redirect()->route('home.show', ['home' => $user->id])->with('message', 'Debit account closed');
     }
 
     private function createDebitAccountNr(): string

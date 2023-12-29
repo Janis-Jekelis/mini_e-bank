@@ -32,14 +32,15 @@
                 </button>
             </div>
             <div class="col-4 text-end">
-                <form method="post" action="{{route('invest.destroy',['user'=>$user,'invest'=>$user])}}">
+                <form method="post"
+                      action="{{route('invest.destroy',['user'=>$user,'invest'=>$user])}}"
+                      onsubmit="return confirm('Close debit account?')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger" >
+                    <button type="submit" class="btn btn-danger">
                         Close account
                     </button>
                 </form>
-
             </div>
         </div>
     </div>

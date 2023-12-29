@@ -83,8 +83,18 @@ class UserController extends Controller
     }
 
 
-    public function destroy($id)
+    public function destroy():RedirectResponse
     {
-        //
+        $user=Auth::user();
+        $debitAcc=$user->debitAccount()->get()->first();
+        $investAcc=$user->investmentAccount()->get()->first();
+        if($debitAcc!==null && $investAcc!==null){
+            return redirect()->route('home.edit', ['home' => $user])->withErrors([
+
+                'errors' => 'Before deleting profile make sure all accounts are closed'
+            ]);
+        }
+        $user->delete();
+        return redirect('/home');
     }
 }

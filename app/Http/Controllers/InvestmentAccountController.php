@@ -114,14 +114,14 @@ class InvestmentAccountController extends Controller
     {
         $account = $user->investmentAccount()->get()->first();
         $assets = $account->asset()->get()->first();
-        if (($account->currency_amount) !== 0.0 || $assets !== null ) {
+        if (($account->currency_amount) !== 0.0 || $assets !== null) {
             return redirect()->route('invest.index', ['user' => $user])->withErrors([
-                    'errors' =>'Before closing account make sure there arent any owned assets or funds on account'
-                ]
-            );
+
+                'errors' => 'Before closing account make sure there arent any owned assets or funds on account'
+            ]);
         }
         $account->delete();
-        return redirect()->route('home.show', ['home' => $user->id])->with('message','Investment account closed');
+        return redirect()->route('home.show', ['home' => $user->id])->with('message', 'Investment account closed');
     }
 
     private function createInvestAccountNr(): string
