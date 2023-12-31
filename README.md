@@ -18,4 +18,4 @@ MySQL
 
 After cloning project 
 
-<button> asdasd </button>
+<button onclick="this.clipboard.writeText('sadad')"> asdasd </button>
