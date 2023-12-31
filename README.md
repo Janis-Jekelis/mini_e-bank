@@ -6,11 +6,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <script type="module" src="./node_modules/@github/clipboard-copy-element/dist/index.js"> </script>
+import '@github/clipboard-copy-element'
+
+< script type="module" src="./node_modules/@github/clipboard-copy-element/dist/index.js" > 
+
 </head>
 <body>
 
-dddd
+< script type="module" src="./node_modules/@github/clipboard-copy-element/dist/index.js" > 
+
+
+    dddd
 
 </body>
 </html>
