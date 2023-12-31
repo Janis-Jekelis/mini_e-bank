@@ -17,5 +17,5 @@ MySQL
 ### Installation
 
 After cloning project 
-<>
-<button onclick="this.clipboard.writeText('copyText.value')"> asdasd</button>
+
+<button> asdasd </button>
