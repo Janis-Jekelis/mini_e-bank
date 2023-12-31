@@ -21,5 +21,8 @@ Run:
     npm install
 
 
+Change .env.example file name to .env
+<br>
+In .env file configure application name and database connection. 
 
     
