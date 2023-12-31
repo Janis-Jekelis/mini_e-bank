@@ -9,10 +9,15 @@
 </head>
 <body>
 
-<clipboard-copy for="blob-path">Copy</clipboard-copy>
+<clipboard-copy for="blob-path"> Copy </clipboard-copy>
 <div id="blob-path">src/index.js</div>
 
 </body>
-
+<script>
+document.addEventListener('clipboard-copy', function(event) {
+  const button = event.target;
+  button.classList.add('highlight')
+})
+</script>
 </html>
 
