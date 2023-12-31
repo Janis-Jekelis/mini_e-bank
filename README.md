@@ -1,7 +1,7 @@
 <script type="module" src="./node_modules/@github/clipboard-copy-element/dist/index.js" ></script>
 
 
-<clipboard-copy
+<clipboard-copy class="btn"
 for="blob-path"> Copy 
 </clipboard-copy>
 <div id="blob-path">src/index.js</div>
