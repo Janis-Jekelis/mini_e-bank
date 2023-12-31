@@ -25,5 +25,7 @@ After cloning project
 </clipboard-copy>
 <div id="blob-path">src/index.js</div>
 
-<script type="module" src="./node_modules/@github/clipboard-copy-element/dist/index.js"></script>
+<script>
+import '@github/clipboard-copy-element'
+</script>
 
